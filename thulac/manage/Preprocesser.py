@@ -34,7 +34,7 @@ class Preprocesser:
 
     def is_X(self, charType):
         def func(c):
-            if (c in charType):
+            if c in charType:
                 return True
             else:
                 return False
@@ -100,47 +100,47 @@ class Preprocesser:
         titleVec = []
         for i in range(len(sentence)):
             c = ord(sentence[i])
-            if (c == 32 or c == 12288):
+            if c == 32 or c == 12288:
                 hasOther = False
                 if (hasSpace):
                     continue
                 else:
-                    if (len(graph) > 0):
+                    if len(graph) > 0:
                         o = graph[-1] & 12
                         graph[-1] = o
                     hasSpace = True
-                    if (not self.rmSpace):
+                    if not self.rmSpace:
                         senClean += sentence[i]
                         graph.append(9)
                     continue
 
-            elif (self.isOther(c)):
+            elif self.isOther(c):
                 if (hasSpace):
                     senClean += sentence[i]
-                    if (self.isSinglePun(c) or self.isModalParticleSet(c)):
+                    if self.isSinglePun(c) or self.isModalParticleSet(c):
                         graph.append(8)
-                        if (self.isSinglePun(c)):
+                        if self.isSinglePun(c):
                             hasSinglePun = True
                     else:
                         graph.append(9)
                         hasSinglePun = False
                     hasSpace = False
-                elif (hasOther):
-                    if (self.isSinglePun(c) or self.isModalParticleSet(c)):
-                        if (len(graph) > 0):
+                elif hasOther:
+                    if self.isSinglePun(c) or self.isModalParticleSet(c):
+                        if len(graph) > 0:
                             o = graph[-1] & 12
                             graph[-1] = o
                         senClean += sentence[i]
                         graph.append(8)
-                        if (self.isSinglePun(c)):
+                        if self.isSinglePun(c):
                             hasSinglePun = True
 
                     else:
-                        if (hasSinglePun):
+                        if hasSinglePun:
                             senClean += sentence[i]
                             graph.append(9)
                         else:
-                            if (graph[-1] == 0):
+                            if graph[-1] == 0:
                                 graph[-1] = 7
                             senClean += sentence[i]
                             graph.append(2)
@@ -148,24 +148,24 @@ class Preprocesser:
                 else:
                     senClean += sentence[i]
                     graph.append(9)
-                    if (self.isSinglePun(c)):
+                    if self.isSinglePun(c):
                         hasSinglePun = True
                     else:
                         hasSinglePun = False
 
-                if (c == 12299):
-                    if (hasTitle):
+                if c == 12299:
+                    if hasTitle:
                         titleVec.append(titleRaw)
                         titleStartVec.append(titleStart)
                         hasTitle = False
                 hasOther = True
             else:
-                if (hasSpace):
+                if hasSpace:
                     senClean += sentence[i]
                     graph.append(9)
-                elif (hasOther):
+                elif hasOther:
                     graph[-1] = graph[-1] & 12
-                    if (hasSinglePun):
+                    if hasSinglePun:
                         senClean += sentence[i]
                         graph.append(9)
                         hasSinglePun = False
@@ -177,20 +177,20 @@ class Preprocesser:
                     graph.append(15)
                 hasSpace = False
                 hasOther = False
-            if (c == 12298):
+            if c == 12298:
                 hasTitle = True
                 titleStart = len(graph)
                 titleRaw = []
-            elif (hasTitle):
+            elif hasTitle:
                 titleRaw.append(c)
 
         for i in range(len(titleVec)):
             titleRaw = titleVec[i]
-            if (self.isPossibleTitle(titleRaw)):
+            if self.isPossibleTitle(titleRaw):
                 start = titleStartVec[i]
                 size = len(titleRaw)
                 # print sentence + ":Here" + str(titleRaw) + ":" + str(start) + ":" + str(size) + ":" + str(len(graph))
-                if (len(titleRaw) == 1):
+                if len(titleRaw) == 1:
                     graph[start] = 9
                     continue
                 graph[start] = 1
@@ -198,21 +198,21 @@ class Preprocesser:
                     graph[j] = 2
                 graph[start + size - 1] = 4
 
-        if (len(graph) != 0):
+        if len(graph) != 0:
             graph[0] = graph[0] & 9
             graph[-1] = graph[-1] & 12
-            if (graph[0] == 0):
+            if graph[0] == 0:
                 graph[0] = 9
-            if (graph[-1] == 0):
+            if graph[-1] == 0:
                 graph[-1] = 12
         return senClean, graph
 
     def isPossibleTitle(self, titleRaw):
-        if (len(titleRaw) > 10 or len(titleRaw) == 0):
+        if len(titleRaw) > 10 or len(titleRaw) == 0:
             return False
         else:
             for i in range(len(titleRaw)):
-                if (self.isOther(titleRaw[i])):
+                if self.isOther(titleRaw[i]):
                     return False
             return True
 
@@ -223,7 +223,7 @@ class Preprocesser:
             return c
 
     def getS2T(self, c):
-        if (c in self.s2t):
+        if c in self.s2t:
             return self.s2t[c]
         else:
             return c
@@ -251,32 +251,32 @@ class Preprocesser:
         # for(int i=0;i<(int)sentence.length();i++)
         for i in range(len(sentence)):
             c = sentence[i]
-            if (c == 32 or c == 12288):
+            if c == 32 or c == 12288:
                 if (hasSpace):
                     continue
                 else:
-                    if (len(graph) > 0):
-                        if (wordLength == 1):
+                    if len(graph) > 0:
+                        if wordLength == 1:
                             graph[-1] = 8
                         else:
                             graph[-1] = 4
                     hasSpace = True
                 wordLength = 0
             else:
-                if (hasSpace):
+                if hasSpace:
                     senClean += sentence[i]
                     graph.append(1)
                     hasSpace = False
                 else:
                     senClean += sentence[i]
-                    if (len(graph) == 0):
+                    if len(graph) == 0:
                         graph.append(1)
                     else:
                         graph.append(2)
 
                 wordLength = wordLength + 1
-        if (len(graph) > 0):
-            if (wordLength == 1):
+        if len(graph) > 0:
+            if wordLength == 1:
                 graph[-1] = 8
             else:
                 graph[-1] = 4

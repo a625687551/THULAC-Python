@@ -38,7 +38,7 @@ class CBModel:
     def byteToInt(self, s):
         ans = "" + s[6] + s[7] + s[4] + s[5] + s[2] + s[3] + s[0] + s[1]
         ans = int(ans, 16)
-        if (s[6] >= '8'):
+        if s[6] >= '8':
             return -((1 << 32) - ans)
         return ans
 

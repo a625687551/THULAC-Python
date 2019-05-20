@@ -25,10 +25,19 @@ encode = encodeGenerator()
 class thulac:
     def __init__(self, user_dict=None, model_path=None, T2S=False, seg_only=False, filt=False, max_length=50000,
                  deli='_', rm_space=False):
-        '''
+        """
         初始化函数，传入用户设置的参数，并且根据参数初始化不同
         模型（调入不同的.dat文件，该文件存储了一个双数组trie树）
-        '''
+        Args:
+            user_dict:
+            model_path:
+            T2S:
+            seg_only:
+            filt:
+            max_length:
+            deli:
+            rm_space:
+        """
         self.__user_specified_dict_name = user_dict
         self.__model_path_char = model_path
         self.__separator = deli
@@ -72,7 +81,11 @@ class thulac:
             self.__tagging_decoder.setLabelTrans()
 
     def __setPrefix(self):
-        '''获取程序运行的路径，以此来确定models的绝对路径以及其他资源文件的路径'''
+        """
+        获取程序运行的路径，以此来确定models的绝对路径以及其他资源文件的路径
+        Returns:
+
+        """
         __prefix = ""
         if (self.__model_path_char is not None):
             __prefix = self.__model_path_char
@@ -83,9 +96,18 @@ class thulac:
         return __prefix
 
     def __cutWithOutMethod(self, oiraw, cut_method, text=True):
-        '''分词，先将原始句子split为一个数组，之后遍历每一行，调用对单行分词的函数（有两种）。
+        """
+        分词，先将原始句子split为一个数组，之后遍历每一行，调用对单行分词的函数（有两种）。
         text=True会返回分词好的字符串，为False则会返回一个二位数组方便用户做后续处理。
-        函数中有一些细节处理主要是用于规范输出格式'''
+        函数中有一些细节处理主要是用于规范输出格式
+        Args:
+            oiraw:
+            cut_method:
+            text:
+
+        Returns:
+
+        """
         oiraw = oiraw.split('\n')
         txt = ""
         array = []
@@ -114,24 +136,31 @@ class thulac:
         return self.__cutWithOutMethod(oiraw, self.__fast_cutline, text=text)
 
     def __cutline(self, oiraw):
-        '''对单行进行分词，这段函数包含前处理preprogress.py以及一系列后处理，将分词结果返回为一个map'''
+        """
+        对单行进行分词，这段函数包含前处理preprogress.py以及一系列后处理，将分词结果返回为一个map
+        Args:
+            oiraw:
+
+        Returns:
+
+        """
         oiraw = decode(oiraw)
         vec = []
-        if (len(oiraw) < self.__maxLength):
+        if len(oiraw) < self.__maxLength:
             vec.append(oiraw)
         else:
             vec = self.__cutRaw(oiraw, self.__maxLength)
         ans = []
         for oiraw in vec:
-            if (self.__useT2S):
+            if self.__useT2S:
                 traw, __poc_cands = self.__preprocesserpreprocesser.clean(oiraw)
                 raw = self.__preprocesserpreprocesser.T2S(traw)
             else:
                 raw, __poc_cands = self.__preprocesserpreprocesser.clean(oiraw)
                 # raw = oiraw
 
-            if (len(raw) > 0):
-                if (self.__seg_only):
+            if len(raw) > 0:
+                if self.__seg_only:
                     tmp, tagged = self.__cws_tagging_decoder.segmentTag(raw, __poc_cands)
                     segged = self.__cws_tagging_decoder.get_seg_result()
                     if (self.__userDict is not None):
@@ -147,16 +176,16 @@ class thulac:
 
                 else:
                     tmp, tagged = self.__tagging_decoder.segmentTag(raw, __poc_cands)
-                    if (self.__userDict is not None):
+                    if self.__userDict is not None:
                         self.__userDict.adjustTag(tagged)
-                    if (self.__use_filter):
+                    if self.__use_filter:
                         self.__myfilter.adjustTag(tagged)
                     self.__nsDict.adjustTag(tagged)
                     self.__idiomDict.adjustTag(tagged)
                     self.__timeword.adjustTag(tagged)
                     self.__punctuation.adjustTag(tagged)
                     ans.extend(tagged)
-        if (self.__seg_only):
+        if self.__seg_only:
             return map(lambda x: encode(x), ans)
         else:
             return map(lambda x: (encode(x[0]), encode(x[1]), encode(x[2])), ans)
@@ -165,13 +194,17 @@ class thulac:
         return x
 
     def __SoInit(self):
-        '''fast_cut函数需要使用thulac.so，在这里导入.so文件'''
-        if (not self.__user_specified_dict_name):
+        """
+        fast_cut函数需要使用thulac.so，在这里导入.so文件
+        Returns:
+
+        """
+        if not self.__user_specified_dict_name:
             self.__user_specified_dict_name = ''
         return SoExtention(self.__prefix, self.__user_specified_dict_name, self.__useT2S, self.__seg_only)
 
     def __fast_cutline(self, oiraw):
-        if (not self.__so):
+        if not self.__so:
             self.__so = self.__SoInit()
         result = self.__so.seg(oiraw).split()
         if not self.__seg_only:
@@ -179,7 +212,11 @@ class thulac:
         return result
 
     def run(self):
-        '''命令行交互程序'''
+        """
+        命令行交互程序
+        Returns:
+
+        """
         while (True):
             oiraw = cInput()
             if (len(oiraw) < 1):
@@ -188,6 +225,15 @@ class thulac:
             print(cutted)
 
     def cut_f(self, input_file, output_file):
+        """
+
+        Args:
+            input_file:
+            output_file:
+
+        Returns:
+
+        """
         input_f = open(input_file, 'r')
         output_f = open(output_file, 'w')
         for line in input_f:
@@ -199,6 +245,15 @@ class thulac:
         print("successfully cut file " + input_file + "!")
 
     def fast_cut_f(self, input_file, output_file):
+        """
+
+        Args:
+            input_file:
+            output_file:
+
+        Returns:
+
+        """
         input_f = open(input_file, 'r')
         output_f = open(output_file, 'w')
 
@@ -210,8 +265,16 @@ class thulac:
         print("successfully cut file " + input_file + "!")
 
     def __cutRaw(self, oiraw, maxLength):
-        '''现将句子按句子完结符号切分，如果切分完后一个句子长度超过限定值
-        ，再对该句子进行切分'''
+        """
+        现将句子按句子完结符号切分，如果切分完后一个句子长度超过限定值
+        ，再对该句子进行切分
+        Args:
+            oiraw:
+            maxLength:
+
+        Returns:
+
+        """
         vec = []
         m = re.findall(u".*?[。？！；;!?]", oiraw)
         num, l, last = 0, 0, 0
@@ -231,6 +294,16 @@ class thulac:
         return vec
 
     def multiprocessing_cut_f(self, input_file, output_file, core=0):
+        """
+        多进程切词，这里采用进程池来控制这个
+        Args:
+            input_file:
+            output_file:
+            core:
+
+        Returns:
+
+        """
         from multiprocessing import Pool
         if core:
             p = Pool(1)
@@ -249,13 +322,37 @@ class thulac:
         output_f.close()
 
     def cutline(self, oiraw):
+        """
+
+        Args:
+            oiraw:
+
+        Returns:
+
+        """
         return self.__cutline(oiraw)
 
 
 def _cutline(lac, x):
+    """
+
+    Args:
+        lac:
+        x:
+
+    Returns:
+
+    """
     return lac.cutline(x)
 
 
 def func_cutline(lac_x):
-    """Convert `f([1,2])` to `f(1,2)` call."""
+    """
+    Convert `f([1,2])` to `f(1,2)` call.
+    Args:
+        lac_x:
+
+    Returns:
+
+    """
     return _cutline(*lac_x)

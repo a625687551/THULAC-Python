@@ -17,7 +17,8 @@ class SoExtention:
                        int(just_seg))  # 调用接口进行初始化
 
     def clear(self):
-        if self._lib != None: self._lib.deinit()
+        if self._lib != None:
+            self._lib.deinit()
 
     def seg(self, data):
         r = self._lib.seg(c_char_p(fixCCP(data)))
@@ -26,9 +27,9 @@ class SoExtention:
         p = self._lib.getResult()
         s = cast(p, c_char_p)
         d = '%s' % s.value
-        if (isPython2):
+        if isPython2:
             self._lib.freeResult();
             return d
         s = s.value.decode('utf-8')
-        self._lib.freeResult();
+        self._lib.freeResult()
         return s

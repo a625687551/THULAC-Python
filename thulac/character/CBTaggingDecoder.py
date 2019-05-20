@@ -34,6 +34,16 @@ class CBTaggingDecoder:
         # self.betas = None
 
     def init(self, modelFile, datFile, labelFile):
+        """
+        卧槽，两个init 清华的咋写的，我想踢刘志远屁股
+        Args:
+            modelFile:
+            datFile:
+            labelFile:
+
+        Returns:
+
+        """
         self.model = CBModel(modelFile)
         self.values = {}
         self.result = {}
@@ -59,7 +69,7 @@ class CBTaggingDecoder:
             self.labelInfo[ind] = line
             segInd = int(line[0]) - int('0')
             for j in range(16):
-                if (((1 << segInd) & j) != 0):
+                if ((1 << segInd) & j) != 0:
                     self.pocTags[j].append(ind)
             ind = ind + 1
             line = labelin.readline()
@@ -76,11 +86,11 @@ class CBTaggingDecoder:
         for i in range(self.model.l_size):
             self.labelLookingFor[i] = None
         for i in range(self.model.l_size):
-            if (self.labelInfo[i][0] == '0' or self.labelInfo[i][0] == '3'):
+            if self.labelInfo[i][0] == '0' or self.labelInfo[i][0] == '3':
                 continue
             for j in range(i + 1):
-                if ((self.labelInfo[i][1:] == self.labelInfo[j][1:]) and (self.labelInfo[j][0] == '0')):
-                    if (self.labelLookingFor[j] is None):
+                if (self.labelInfo[i][1:] == self.labelInfo[j][1:]) and (self.labelInfo[j][0] == '0'):
+                    if self.labelLookingFor[j] is None:
                         self.labelLookingFor[j] = [0, 0]
                         self.labelLookingFor[j][0] = -1
                         self.labelLookingFor[j][1] = -1
@@ -117,37 +127,37 @@ class CBTaggingDecoder:
                 iIsEnd = ((ni == 2) or (ni == 3))
                 jIsBegin = ((nj == 0) or (nj == 3))
                 sameTag = self.labelInfo[i][1:] == self.labelInfo[j][1:]
-                if (sameTag):
-                    if ((ni == 0 and nj == 1) or \
-                            (ni == 0 and nj == 2) or \
-                            (ni == 1 and nj == 2) or \
-                            (ni == 1 and nj == 1) or \
-                            (ni == 2 and nj == 0) or \
-                            (ni == 2 and nj == 3) or \
-                            (ni == 3 and nj == 3) or \
-                            (ni == 3 and nj == 0)):
+                if sameTag:
+                    if ((ni == 0 and nj == 1) or (ni == 0 and nj == 2) or (ni == 1 and nj == 2) or
+                            (ni == 1 and nj == 1) or (ni == 2 and nj == 0) or (ni == 2 and nj == 3) or
+                            (ni == 3 and nj == 3) or (ni == 3 and nj == 0)):
                         preLabels[j].append(i)
                         postLabels[i].append(j)
                 else:
-                    if (iIsEnd and jIsBegin):
+                    if iIsEnd and jIsBegin:
                         preLabels[j].append(i)
                         postLabels[i].append(j)
-        self.labelTransPre = [[] for i in range(lSize)]
+        self.labelTransPre = [[] for _ in range(lSize)]
         for i in range(lSize):
-            self.labelTransPre[i] = [0 for k in range(len(preLabels[i]) + 1)]
+            self.labelTransPre[i] = [0 for _ in range(len(preLabels[i]) + 1)]
             for j in range(len(preLabels[i])):
                 self.labelTransPre[i][j] = preLabels[i][j]
             self.labelTransPre[i][len(preLabels[i])] = -1
 
-        self.labelTransPost = [[] for i in range(lSize)]
+        self.labelTransPost = [[] for _ in range(lSize)]
         for i in range(lSize):
-            self.labelTransPost[i] = [0 for k in range(len(postLabels[i]) + 1)]
+            self.labelTransPost[i] = [0 for _ in range(len(postLabels[i]) + 1)]
             for j in range(len(postLabels[i])):
                 self.labelTransPost[i][j] = postLabels[i][j]
             self.labelTransPost[i][len(postLabels[i])] = -1
 
     def putValues(self):
-        if (self.len == 0):
+        """
+
+        Returns:
+
+        """
+        if self.len == 0:
             return
         for i in range(self.len):
             self.nodes[i].type = 0
@@ -159,11 +169,20 @@ class CBTaggingDecoder:
         self.values = tuple(self.values)
 
     def segmentTag(self, raw, graph):
-        if (len(raw) == 0):
+        """
+
+        Args:
+            raw:
+            graph:
+
+        Returns:
+
+        """
+        if len(raw) == 0:
             return 0, []
         for i in range(len(raw)):
             pocs = graph[i]
-            if (pocs != 0):
+            if pocs != 0:
                 self.allowedLabelLists[i] = self.pocsToTags[pocs]
             else:
                 self.allowedLabelLists[i] = self.pocsToTags[15]
@@ -174,12 +193,12 @@ class CBTaggingDecoder:
         self.dp()
 
         offset = 0
-        if (len(self.labelInfo[0]) < 2):
+        if len(self.labelInfo[0]) < 2:
             return 1, []
         ts = []
 
         for i in range(self.len):
-            if (i not in self.result):
+            if i not in self.result:
                 self.result[i] = 0
             if ((i == self.len - 1) or (self.labelInfo[self.result[i]][0] == '2') or (
                     self.labelInfo[self.result[i]][0] == '3')):
@@ -191,7 +210,7 @@ class CBTaggingDecoder:
         segged = []
         offset = 0
         for i in range(self.len):
-            if ((i == 0) or (self.labelInfo[self.result[i]][0] == '0') or (self.labelInfo[self.result[i]][0] == '3')):
+            if (i == 0) or (self.labelInfo[self.result[i]][0] == '0') or (self.labelInfo[self.result[i]][0] == '3'):
                 segged.append(self.sequence[offset:i])
                 offset = i
         segged.append(self.sequence[offset:self.len])

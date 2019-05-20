@@ -34,7 +34,7 @@ class Dat:
 
     def getIndex(self, base, character):
         ind = self.dat[2 * base] + character
-        if ((ind >= self.datSize) or self.dat[2 * ind + 1] != base):
+        if (ind >= self.datSize) or self.dat[2 * ind + 1] != base:
             return -1
         return ind
 
@@ -48,12 +48,12 @@ class Dat:
             ind = 0
             for i in range(offset, len(sentence)):
                 ind = preBase + sentence[i]
-                if (ind < 0 or ind >= self.datSize or self.dat[2 * ind + 1] != preInd):
+                if ind < 0 or ind >= self.datSize or self.dat[2 * ind + 1] != preInd:
                     break
                 preInd = ind
                 preBase = self.dat[2 * ind]
                 ind = preBase
-                if (not (ind < 0 or ind >= self.datSize or self.dat[2 * ind + 1] != preInd)):
+                if not (ind < 0 or ind >= self.datSize or self.dat[2 * ind + 1] != preInd):
                     bs.append(offset)
                     es.append(i + 1)
                     if (empty):
@@ -65,11 +65,11 @@ class Dat:
         base = 0
         for i in range(len(word)):
             ind = self.dat[2 * ind] + ord(word[i])
-            if ((ind >= self.datSize) or (self.dat[2 * ind + 1] != base)):
+            if (ind >= self.datSize) or (self.dat[2 * ind + 1] != base):
                 return -1
             base = ind
         ind = self.dat[2 * base]
-        if ((ind < self.datSize) and (self.dat[2 * ind + 1] == base)):
+        if (ind < self.datSize) and (self.dat[2 * ind + 1] == base):
             return ind
         return -1
 
@@ -84,7 +84,7 @@ class Dat:
         for i in range(len(prefix)):
 
             ind = self.dat[2 * ind] + ord(prefix[i])
-            if ((ind >= self.datSize) or self.dat[2 * ind + 1] != base):
+            if (ind >= self.datSize) or self.dat[2 * ind + 1] != base:
                 return i
             base = ind
         return -base
@@ -99,13 +99,13 @@ class Dat:
 def compareWords(firstLex, secondLex):
     minSize = min(len(firstLex[0]), len(secondLex[0]))
     for i in range(minSize):
-        if (firstLex[0][i] > secondLex[0][i]):
+        if firstLex[0][i] > secondLex[0][i]:
             return 1
-        if (firstLex[0][i] < secondLex[0][i]):
+        if firstLex[0][i] < secondLex[0][i]:
             return -1
-    if (len(firstLex[0]) > len(secondLex[0])):
+    if len(firstLex[0]) > len(secondLex[0]):
         return 1
-    if (len(firstLex[0]) < len(secondLex[0])):
+    if len(firstLex[0]) < len(secondLex[0]):
         return -1
     return 0
 

@@ -1,4 +1,6 @@
-# coding: utf-8
+# —*- coding: utf-8 -*—
+
+
 class TimeWord():
     def __init__(self):
         self.__arabicNumSet = set()
@@ -27,27 +29,27 @@ class TimeWord():
     def isArabicNum(self, word):
         allArabic = True
         for i in word:
-            if (i not in self.__arabicNumSet):
+            if i not in self.__arabicNumSet:
                 allArabic = False
                 break
         return allArabic
 
     def isTimeWord(self, word):
-        if (len(word) != 1):
+        if len(word) != 1:
             return False
-        if (word[0] in self.__timeWordSet):
+        if word[0] in self.__timeWordSet:
             return True
         else:
             return False
 
     def isDoubleWord(self, word, postWord):
-        if (len(word) != 1 or len(postWord) != 1):
+        if len(word) != 1 or len(postWord) != 1:
             return False
         else:
             wordInt = word[0]
             postWordInt = postWord[0]
-            if (wordInt == postWordInt):
-                if (wordInt in self.__otherSet):
+            if wordInt == postWordInt:
+                if wordInt in self.__otherSet:
                     return True
                 else:
                     return False
@@ -59,11 +61,11 @@ class TimeWord():
         hasTimeWord = False
         for i in range(size - 1, -1, -1):
             word = sentence[i]
-            if (self.isTimeWord(word)):
+            if self.isTimeWord(word):
                 hasTimeWord = True
             else:
-                if (hasTimeWord):
-                    if (self.isArabicNum(word)):
+                if hasTimeWord:
+                    if self.isArabicNum(word):
                         sentence[i] += sentence[i + 1]
                         del sentence[i + 1]
                 hasTimeWord = False
@@ -72,7 +74,7 @@ class TimeWord():
         for i in range(size - 2, -1, -1):
             word = sentence[i]
             postWord = sentence[i + 1]
-            if (self.isDoubleWord(word, postWord)):
+            if self.isDoubleWord(word, postWord):
                 sentence[i] += sentence[i + 1]
                 del sentence[i + 1]
 
@@ -82,18 +84,18 @@ class TimeWord():
         hasTimeWord = False
         for i in range(size - 1, -1, -1):
             word = sentence[i][0]
-            if (self.isTimeWord(word)):
+            if self.isTimeWord(word):
                 hasTimeWord = True
             else:
-                if (hasTimeWord):
-                    if (self.isArabicNum(word)):
+                if hasTimeWord:
+                    if self.isArabicNum(word):
                         sentence[i] = (sentence[i][0] + sentence[i + 1][0], sentence[i][1], 't')
                         del sentence[i + 1]
                 hasTimeWord = False
         size = len(sentence)
         for i in range(size):
             word = sentence[i][0]
-            if (self.isHttpWord(word)):
+            if self.isHttpWord(word):
                 sentence[i] = (sentence[i][0], sentence[i][1], 'x')
 
         size = len(sentence)
@@ -101,16 +103,16 @@ class TimeWord():
         for i in range(1, size):
             preWord = sentence[i - 1][0]
             word = sentence[i][0]
-            if (len(preWord) == 1 and preWord[0] == 64):
-                if (len(word) != 1 or word[0] != 64):
+            if len(preWord) == 1 and preWord[0] == 64:
+                if len(word) != 1 or word[0] != 64:
                     sentence[i] = (sentence[i][0], sentence[i][1], 'np')
         # del word[:]
 
     def isHttpWord(self, word):
-        if (len(word) < 5):
+        if len(word) < 5:
             return False
         else:
-            if (word[0] == ord('h') and word[1] == ord('t') and word[2] == ord('t') and word[3] == ord('p')):
+            if word[0] == ord('h') and word[1] == ord('t') and word[2] == ord('t') and word[3] == ord('p'):
                 return True
             else:
                 return False
@@ -121,11 +123,11 @@ class TimeWord():
         hasTimeWord = False
         for i in range(size - 1, -1, -1):
             word = sentence[i].word
-            if (self.isTimeWord(word)):
+            if self.isTimeWord(word):
                 hasTimeWord = True
             else:
-                if (hasTimeWord):
-                    if (self.isArabicNum(word)):
+                if hasTimeWord:
+                    if self.isArabicNum(word):
                         sentence[i].word += sentence[i + 1].word
                         del sentence[i + 1]
                         sentence[i].tag = "t"
@@ -135,14 +137,14 @@ class TimeWord():
         for i in range(size - 2, -1, -1):
             word = sentence[i].word
             postWord = sentence[i + 1].word
-            if (self.isDoubleWord(word, postWord)):
+            if self.isDoubleWord(word, postWord):
                 sentence[i].word += sentence[i + 1].word
                 del sentence[i + 1]
 
         size = len(sentence)
         for i in range(size):
             word = sentence[i].word
-            if (self.isHttpWord(word)):
+            if self.isHttpWord(word):
                 sentence[i].tag = 'x'
 
         size = len(sentence)
@@ -150,8 +152,8 @@ class TimeWord():
         for i in range(size):
             preWord = sentence[i - 1].word
             word = sentence[i].word
-            if (len(preWord) == 1 and preWord[0] == 64):
-                if (len(word) != 1 or word[0] != 64):
+            if len(preWord) == 1 and preWord[0] == 64:
+                if len(word) != 1 or word[0] != 64:
                     sentence[i].tag = "np"
 
         del word[:]
