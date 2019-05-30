@@ -61,11 +61,11 @@ class thulac:
         self.__myfilter = None
         self.__so = None
 
-        if (self.__user_specified_dict_name):
+        if self.__user_specified_dict_name:
             self.__userDict = Postprocesser(self.__user_specified_dict_name, "uw", True)
-        if (self.__use_filter):
+        if self.__use_filter:
             self.__myfilter = Filter((self.__prefix + "xu.dat"), (self.__prefix + "time.dat"))
-        if (self.__seg_only):
+        if self.__seg_only:
             self.__cws_tagging_decoder = CBTaggingDecoder()
             self.__cws_tagging_decoder.init((self.__prefix + "cws_model.bin"), (self.__prefix + "cws_dat.bin"),
                                             (self.__prefix + "cws_label.txt"))
@@ -87,9 +87,9 @@ class thulac:
 
         """
         __prefix = ""
-        if (self.__model_path_char is not None):
+        if self.__model_path_char is not None:
             __prefix = self.__model_path_char
-            if (__prefix[-1] != "/"):
+            if __prefix[-1] != "/":
                 __prefix = __prefix + "/"
         else:
             __prefix = os.path.dirname(os.path.realpath(__file__)) + "/models/"
@@ -111,9 +111,9 @@ class thulac:
         oiraw = oiraw.split('\n')
         txt = ""
         array = []
-        if (text):
+        if text:
             for line in oiraw:
-                if (self.__seg_only):
+                if self.__seg_only:
                     temp_txt = reduce(lambda x, y: x + ' ' + y if y != " " else x, cut_method(line), '') + '\n'
                 else:
                     temp_txt = reduce(lambda x, y: x + ' ' + "".join(y), cut_method(line), '') + '\n'
@@ -121,8 +121,8 @@ class thulac:
             return txt[:-1]
         else:
             for line in oiraw:
-                if (line):
-                    if (self.__seg_only):
+                if line:
+                    if self.__seg_only:
                         array += (reduce(lambda x, y: x + [[y, '']], cut_method(line), []))
                     else:
                         array += (reduce(lambda x, y: x + [[y[0], y[2]]], cut_method(line), []))
@@ -163,9 +163,9 @@ class thulac:
                 if self.__seg_only:
                     tmp, tagged = self.__cws_tagging_decoder.segmentTag(raw, __poc_cands)
                     segged = self.__cws_tagging_decoder.get_seg_result()
-                    if (self.__userDict is not None):
-                        self.__userDict.adjustSeg(segged)
-                    if (self.__use_filter):
+                    if self.__userDict is not None:
+                        self.__userDict.adjustSeg()
+                    if self.__use_filter:
                         self.__myfilter.adjustSeg(segged)
                     self.__nsDict.adjustSeg(segged)
                     self.__idiomDict.adjustSeg(segged)
